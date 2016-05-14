@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-modules id="moduleCoreId" project-version="1.5.0">
+    <wb-module deploy-name="com.cht.emm">
+        <wb-resource deploy-path="/emm/WEB-INF/classes" source-path="/src"/>
+        <wb-resource deploy-path="/emm" source-path="/WebRoot"/>
+        <wb-resource deploy-path="/emm/WEB-INF/classes/conf" source-path="/src/conf"/>
+        <property name="java-output-path" value="/com.cht.emm/WebRoot/WEB-INF/classes"/>
+        <property name="context-root" value="com.cht.emm"/>
+    </wb-module>
+</project-modules>

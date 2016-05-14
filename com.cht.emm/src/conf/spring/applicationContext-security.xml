@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+xmlns:beans="http://www.springframework.org/schema/beans"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.springframework.org/schema/beans 
+					http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                    http://www.springframework.org/schema/security 
+                    http://www.springframework.org/schema/security/spring-security-3.1.xsd">
+ 
+  <http pattern="/resources/**" security="none"></http>	
+  <http pattern="/devoops/**" security="none"></http>
+  <http pattern="/jstree-master/**" security="none"></http>
+  <http pattern="/login" security="none"></http>
+  <http pattern="/logout" security="none"></http>
+  <http pattern="/rest/mobile/**" security="none"></http>
+  <http pattern="/device/rest/**" security="none"></http>
+  <http pattern="/rest/**" security="none"></http>
+  <http pattern="/uploads/**" security="none"></http>
+   <http pattern="/console/*/select*" security="none"></http>
+  <http pattern="/news/**" security="none"></http>
+  <http pattern="/views/validatecode.jsp" security="none"></http>
+
+  <http use-expressions="true" entry-point-ref="authenticationProcessingFilterEntryPoint" >  
+        <logout logout-url="/j_spring_security_logout" logout-success-url="/logout" invalidate-session="true"/>  
+        <!-- 实现免登陆验证 -->  
+        <!-- remember-me  token-validity-seconds="123456789"/-->     
+        <!-- 登陆过滤器 ：实现对验证码的检验-->
+        <custom-filter ref="loginFilter" position="FORM_LOGIN_FILTER"  />
+        <!--  session-management invalid-session-url="/timeout">  
+            <concurrency-control max-sessions="1" error-if-maximum-exceeded="true" />  
+        </session-management -->
+        <session-management session-authentication-strategy-ref="sas" session-authentication-error-url="/login" invalid-session-url="/login" />        
+        <!-- 自定义拦截器：实现用户权限验证和资源 权限验证 --> 
+        <custom-filter ref="mySecurityFilter" before="FILTER_SECURITY_INTERCEPTOR"/>  
+        <custom-filter position="CONCURRENT_SESSION_FILTER" ref="concurrencyFilter" /> 
+  </http>  
+      
+    <!-- 登录验证器 -->  
+  <beans:bean id="loginFilter"  
+        class="com.cht.emm.security.MyUsernamePasswordAuthenticationFilter">  
+        <!-- 处理登录的action -->  
+        <beans:property name="filterProcessesUrl" value="/j_spring_security_check"></beans:property>  
+        <!-- 验证成功后的处理-->  
+        <beans:property name="authenticationSuccessHandler" ref="successHandler"></beans:property>  
+        <!-- 验证失败后的处理-->  
+        <beans:property name="authenticationFailureHandler" ref="failureHandler"></beans:property>  
+        <beans:property name="authenticationManager" ref="myAuthenticationManager"></beans:property>  
+        <!-- 注入DAO为了查询相应的用户 -->  
+        <beans:property name="userService" ref="userService"></beans:property>
+        <beans:property name="thirdPartConfigService" ref="thirdPartConfigService"></beans:property>
+        <beans:property name="sessionAuthenticationStrategy" ref="sas" /> 
+        <beans:property name="propertiesReader" ref="propertiesReader"></beans:property>
+   </beans:bean> 
+
+	    <!-- 会话管理配置   -->
+  <beans:bean id="concurrencyFilter"  
+	    class="org.springframework.security.web.session.ConcurrentSessionFilter">  
+	    <beans:property name="sessionRegistry" ref="sessionRegistry" />  
+	    <beans:property name="expiredUrl" value="/timeout" />  
+  </beans:bean>  
+  <beans:bean id="sas"  
+	    class="com.cht.emm.security.session.SmartConcurrentSessionControlStrategy">  
+	    <beans:constructor-arg name="sessionRegistry" ref="sessionRegistry" />  
+	    <beans:property name="maximumSessions" value="2" /> 
+	    <beans:property name="exceptionIfMaximumExceeded" value="true"/> 
+  </beans:bean>  
+  <beans:bean id="sessionRegistry" class="com.cht.emm.security.session.SmartSessionRegistry" />
+  
+  <authentication-manager alias="myAuthenticationManager">
+  		<!--authentication-provider user-service-ref="uds" --> 
+  		<authentication-provider ref="myAuthenticationProvider">    						
+  	    <!--  盐值  [添加这个属性后，加密密码明文为:"密码明文{盐值}"] -->
+  		<!-- password-encoder hash="md5">
+  			<salt-source user-property="username"/>  
+  		</password-encoder --> 		
+  		</authentication-provider>
+  </authentication-manager>
+  
+  <!-- beans:bean id="myAuthenticationProvider" class="com.cht.emm.security.CustomAuthenticationProvider">
+       <beans:property name="userService" ref="userService"></beans:property>  
+  </beans:bean -->
+  
+  <beans:bean id="myAuthenticationProvider" class="com.cht.emm.security.MyDaoAuthenticationProvider">
+       <beans:property name="userDetailsService" ref="uds"></beans:property> 
+       <beans:property name="userService" ref="userService"></beans:property> 
+       <beans:property name="roleService" ref="roleService"></beans:property> 
+       <beans:property name="propertiesReader" ref="propertiesReader"></beans:property> 
+       <beans:property name="thirdPartConfigService" ref="thirdPartConfigService"></beans:property> 
+  </beans:bean>
+  
+  <!-- 登录失败后业务处理 -->
+  <beans:bean id="failureHandler" class="com.cht.emm.security.LoginAuthenticationFailureHandler"></beans:bean>
+  <!-- 登录成功业务处理 -->
+  <beans:bean id="successHandler" class="com.cht.emm.security.LoginAuthenticationSuccesssHandler">
+  	<beans:property name="adminUrl" value="/admin"></beans:property>  <!-- 可变换登录成功后的路径，验证用户是否拥有该权限 -->
+  	<beans:property name="userUrl" value="/user"></beans:property>  <!-- 可变换登录成功后的路径，验证用户是否拥有该权限 -->
+  </beans:bean>
+  
+  <!-- 自定义过滤器  -->
+  <beans:bean id="mySecurityFilter" class="com.cht.emm.security.MyFilterSecurityInterceptor">
+  	<beans:property name="accessDecisionManager" ref="accessDescisionManager"></beans:property>
+  	<beans:property name="fisMetadataSource" ref="securityMetadataSource"></beans:property>
+  	<beans:property name="authenticationManager" ref="myAuthenticationManager"></beans:property>
+  </beans:bean>
+  
+  <beans:bean id="securityMetadataSource" class="com.cht.emm.security.MySecurityMetadataSource">
+  	<beans:constructor-arg name="userService" ref="userService"></beans:constructor-arg>
+  	<beans:constructor-arg name="roleService" ref="roleService"></beans:constructor-arg>
+  	<beans:constructor-arg name="resourceAuthService" ref="resourceAuthService"></beans:constructor-arg>
+  	<beans:constructor-arg name="dbInitialHandler" ref="dbInitialHandler"></beans:constructor-arg>
+  </beans:bean>
+  
+  <beans:bean id="accessDescisionManager" class="com.cht.emm.security.MyAccessDescisionManager"></beans:bean>
+     
+  <beans:bean id="uds" class="com.cht.emm.security.MyUserDetailServiceImpl">
+  	<beans:property name="userService">
+		<beans:ref bean="userService"/>
+  	</beans:property>
+  </beans:bean>
+  
+  <!-- 未登录的切入点 -->  
+  <beans:bean id="authenticationProcessingFilterEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">  
+        <beans:property name="loginFormUrl" value="/login"></beans:property>  
+  </beans:bean>  
+  <!-- 数据库初始化任务 -->
+  <beans:bean id="dbInitialHandler" class="com.cht.emm.security.DBInitialHandler">
+      <beans:property name="propertiesReader" ref="propertiesReader"></beans:property>
+  </beans:bean>
+    
+  <beans:bean id="propertiesReader" class="com.cht.emm.util.PropertiesReader">
+	    <beans:constructor-arg name="file" value="classpath:/conf/config.properties"></beans:constructor-arg>
+  </beans:bean>
+  <beans:bean id="codeGenerator" class="com.cht.emm.util.CodeGenerator">
+	     <beans:property name="baseRoot" value=""></beans:property>
+  </beans:bean>
+ 
+  </beans:beans>

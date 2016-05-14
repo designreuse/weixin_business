@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="mip" default="deploy">
+	<echo message="******************************************************" />
+	<echo message="mip 发布版本构建向导" />
+	<echo message="******************************************************" />
+
+	<property environment="env" />
+	<property name="tomcat.home" value="${env.TOMCAT_HOME}"/>
+	<property name="java.home" value="${env.JAVA_HOME}"/>	
+	<property file="build.properties" />
+	<property file="src/config.properties"/>	
+	<property name="project.root" value="." />
+	<property name="src.dir" value="${project.root}/src" />
+	<property name="compile.dir" value="${project.root}/WebRoot/WEB-INF/classes" />
+	<property name="jar.dir" value="${project.root}/WebRoot/WEB-INF/lib"/>
+	<property name="template.dir" value="${project.root}/template" />
+	
+	<!-- 当前时间、日期 -->
+	<tstamp>
+		<format property="CURRENT_DATE_TIME" pattern="yyyy.MM.dd HH:mm:ss" locale="zh"/>
+	</tstamp>
+
+	<!-- Java编译CLASSPATH -->
+	<path id="master-classpath">
+		<fileset dir="${project.root}/WebRoot/WEB-INF/lib" />
+	</path>
+
+	<target name="clean">
+	    <delete dir="${compile.dir}"/>
+		<delete dir="build" />
+		<delete dir="${tomcat.home}/webapps" />
+	</target>
+	
+	<!-- 编译JAVA 文件 -->
+	<target name="compile" description="编译Java文件" depends="clean">
+	    <!--echo message="构建mip.service工程" /-->
+		<!-- ant antfile="../nari.mip.backstage.service/build.xml" inheritAll="false" inheritrefs="true" /-->
+		<echo message="编译JAVA 文件..." />
+		<echo>JAVA_HOME = ${java.home}</echo>
+		<echo>JAVA_VERSION = ${java.version}</echo>
+		
+		<mkdir dir="${compile.dir}" />
+		<javac destdir="${compile.dir}" source="1.6" target="1.6" debug="true" 
+			        deprecation="false" verbose="false" optimize="false" failonerror="true"
+			        encoding="UTF-8" >
+			<src path="${src.dir}"/>
+			<classpath refid="master-classpath" />
+		</javac>
+	</target>
+	
+	<target name="jar" depends="compile" description="构建jar包">
+		<mkdir dir="${jar.dir}" />
+		<jar jarfile="${jar.dir}/${project.name}.jar" basedir="${compile.dir}" filesonly="no"></jar>
+	</target>
+	
+	<!-- 构建发布版本 -->
+	<target name="build-war" depends="jar">
+		<mkdir dir="build" />
+        <!-- web content(jsp/js/html....) + classes-->
+        <copy todir="build" overwrite="true">
+            <fileset dir="${project.root}/WebRoot">
+                <include name="**/*.*" /> 
+            	<include name="uploads/*" />
+            	<exclude name="**/nari/mip/**"/>
+            	<exclude name="servlet-3.0.1.jar" />
+            </fileset>
+        </copy>
+        <!--config files -->
+		<copy todir="build/WEB-INF/classes" overwrite="true" >
+			<fileset dir="${src.dir}">
+				<include name="conf/**/*.*"/>				
+			</fileset>
+		</copy>
+		<!--拷贝nari.mip.backstage.service工程到lib目录-->
+		<!--copy todir="${project.root}/build/WEB-INF/lib" overwrite="true">
+		    <fileset dir="../nari.mip.backstage.service/build">
+				<include name="*.jar" />
+			</fileset>
+		</copy-->
+		<!-- war -->
+		<echo>打包发布的war：${project.root}/build/${project.name}.war</echo>
+		<war warfile="${project.root}/build/${project.name}.war" webxml="${project.root}/build/WEB-INF/web.xml">
+			<lib dir="${project.root}/build/WEB-INF/lib" />
+			<classes dir="${project.root}/build/WEB-INF/classes" />
+			<fileset dir="${project.root}/build/">
+				<exclude name="**/lib/**/*.*"/>
+                <exclude name="**/classes/**/*.*"/>
+                <exclude name="**/web.xml"/>
+				<exclude name="*ar"/>
+			</fileset>
+		</war>
+	</target>
+	
+	<target name="deploy" depends="build-war">
+	    
+	    <mkdir dir="${tomcat.home}/webapps" />
+        <copy todir="${tomcat.home}/webapps" overwrite="true">
+            <fileset dir="${project.root}//build">
+                <include name="${project.name}.war" />
+            </fileset>
+        </copy>
+	</target>
+	
+</project>

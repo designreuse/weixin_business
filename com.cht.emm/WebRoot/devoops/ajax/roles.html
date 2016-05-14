@@ -1,0 +1,74 @@
+<div class="row">
+	<div id="breadcrumb" class="col-md-12">
+		<ol class="breadcrumb">
+			<li><a href="#">角色管理</a></li>
+			<li><a href="#">角色列表</a></li>
+		</ol>
+	</div>
+</div>
+<div class="row">
+	<div class="col-xs-12">
+		<div class="box">
+			<div class="box-header">
+				<div class="box-name">
+					<i class="fa fa-certificate"></i>
+					<span>角色列表</span>
+				</div>
+				<div class="no-move"></div>
+			</div>
+			<div class="box-content no-padding table-responsive">
+				<table class="table table-bordered table-striped table-hover table-heading table-datatable" id="datatable-4">
+					<thead>
+						<tr>
+							<th><label><input type="text" name="search_name" value="搜索名称" class="search_init" /></label></th>
+							<th><label><input type="text" name="search_enroll" value="搜索描述" class="search_init" /></label></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>角色1</td>
+							<td>发布应用</td>
+						</tr>
+						<tr>
+							<td>角色2</td>
+							<td>擦除数据</td>
+						</tr>
+						<tr>
+							<td>角色3</td>
+							<td>超级管理员</td>
+						</tr>
+						<tr>
+							<td>角色4</td>
+							<td>发布咨讯</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<th>名称</th>
+							<th>描述</th>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+// Run Datables plugin and create 3 variants of settings
+function AllTables(){
+	TestTable4();
+	LoadSelect2Script(MakeSelect2);
+}
+function MakeSelect2(){
+	$('select').select2();
+	$('.dataTables_filter').each(function(){
+		$(this).find('label input[type=text]').attr('placeholder', 'Search');
+	});
+}
+$(document).ready(function() {
+	// Load Datatables and run plugin on tables 
+	LoadDataTablesScripts(AllTables);
+	// Add Drag-n-Drop feature
+	WinMove();
+});
+</script>
