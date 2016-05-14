@@ -15,6 +15,7 @@
 	<property name="jar.dir" value="${project.root}/WebRoot/WEB-INF/lib"/>
 	<property name="template.dir" value="${project.root}/template" />
 	
+	
 	<!-- 当前时间、日期 -->
 	<tstamp>
 		<format property="CURRENT_DATE_TIME" pattern="yyyy.MM.dd HH:mm:ss" locale="zh"/>
