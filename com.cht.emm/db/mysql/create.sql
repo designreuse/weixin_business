@@ -298,33 +298,6 @@ CREATE TABLE `mip_sys_user_role` (
   CONSTRAINT `fk_user_role_role_id` FOREIGN KEY (`role_id`) REFERENCES `mip_sys_role` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `fk_user_role_user_id` FOREIGN KEY (`user_id`) REFERENCES `mip_sys_user` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用户角色关联表';
- 
--- 设备表
-CREATE TABLE `mip_sys_device` (
-  `id` varchar(36) NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `os` tinyint(4) DEFAULT NULL,
-  `type` tinyint(4) DEFAULT NULL,
-  `status` tinyint(4) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
- 
---
--- 设备详情表
---
-	
-DROP TABLE IF EXISTS `mip_sys_device_detail`;
- 
-CREATE TABLE `mip_sys_device_detail` (
-  `id` varchar(32) NOT NULL,
-  `device_id` varchar(32) NOT NULL,
-  `register_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `destroy_time` timestamp NOT NULL DEFAULT null,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
- 
-  
- 
 
 -- 应用用户组
 

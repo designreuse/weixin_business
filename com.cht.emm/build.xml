@@ -29,7 +29,7 @@
 	<target name="clean">
 	    <delete dir="${compile.dir}"/>
 		<delete dir="build" />
-		<delete dir="${tomcat.home}/webapps" />
+		<!-- delete dir="${tomcat.home}/webapps" /-->
 	</target>
 	
 	<!-- 编译JAVA 文件 -->
