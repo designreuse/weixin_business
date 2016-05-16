@@ -55,11 +55,34 @@
 	var loginHref = defaultHref + "/login";
 
 	var curHref = location.href;
-	//用户点击注销按钮
-	if (-1 != curHref.indexOf("/logout")) {
+	
+	if(port!=80){
 		
-		location.href = loginHref;
-	} 
+		if(defaultHref!=curHref && curHref!=loginHref && defaultHref+"/"!=curHref && loginHref+"/"!=curHref){
+			
+			location.href = loginHref;
+		}
+		
+	}else{
+		
+		var hrefWithoutPort = scheme + "://" + server + context;
+		
+		var hrefWithoutPortLogin = scheme + "://" + server + context+ "/login";;
+		
+		if(-1!=curHref.indexOf(":80/")){
+		
+			if(defaultHref!=curHref && curHref!=loginHref && defaultHref+"/"!=curHref && loginHref+"/"!=curHref){
+					
+					location.href = loginHref;
+				}
+		}else{
+			
+			if(hrefWithoutPort!=curHref && curHref!=hrefWithoutPortLogin && hrefWithoutPort+"/"!=curHref && hrefWithoutPortLogin+"/"!=curHref){
+				
+				location.href = hrefWithoutPortLogin;
+			}
+		}
+	}
 
 	$(document).ready(
 			function() {

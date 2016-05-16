@@ -122,6 +122,11 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans
   <beans:bean id="authenticationProcessingFilterEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">  
         <beans:property name="loginFormUrl" value="/login"></beans:property>  
   </beans:bean>  
+  
+  <!-- beans:bean id="smartLoginUrlAuthenticationEntryPoint" class="com.cht.emm.security.SmartLoginUrlAuthenticationEntryPoint">  
+        <beans:property name="loginFormUrl" value="/login"></beans:property>  
+  </beans:bean--> 
+  
   <!-- 数据库初始化任务 -->
   <beans:bean id="dbInitialHandler" class="com.cht.emm.security.DBInitialHandler">
       <beans:property name="propertiesReader" ref="propertiesReader"></beans:property>
