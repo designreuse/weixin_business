@@ -97,7 +97,7 @@
 		<div class="row" style="height:100%;min-height:100%">
 			<div id="sidebar-left" class="col-xs-2 col-sm-2">
 				<ul class="nav main-menu">
-					<!-- li class="dropdown"><a href="#" class="dropdown-toggle">
+					<li class="dropdown"><a href="#" class="dropdown-toggle">
 							<i class="fa fa-video-camera"></i> <span class="hidden-from-md">监控分析</span><i
 							class="hidden-from-md toggle fa fa-angle-down"></i> </a>
 						<ul class="dropdown-menu">
@@ -145,7 +145,7 @@
 								href="${pageContext.request.contextPath}/console/news"><i
 									class="fa fa-dot"></i><span>资讯列表</span>
 							</a></li>
-						</ul></li-->
+						</ul></li>
 
 					<li class="dropdown"><a href="#" class="dropdown-toggle">
 							<i class="fa fa-user"></i> <span class="hidden-from-md">权限管理</span>
