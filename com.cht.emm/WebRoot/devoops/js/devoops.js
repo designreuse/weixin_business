@@ -3877,3 +3877,35 @@ function TestTable_alldevice() {
 	});
 
 }
+
+
+/*(function($){
+    var _ajax=$.ajax;
+    $.ajax=function(s){
+    	
+        var oldErrFun=s.error;
+        var errHeader=s.errorHeader || "Error-Json";
+        
+        s.error=function(xhr,status,err){
+        	
+            var errMsg =  xhr.getResponseHeader(errHeader);
+            
+            if(errHeader=="Error-Json"){
+            
+	            alert(errMsg);     //此处获取到错误信息 进行跳转，也可以把跳转的地址从服务端传递过来 
+	            
+	            var loginUrl = errMsg.loginUrl;
+	            
+	            location.href = loginUrl;
+	            
+            }
+            	
+            oldErrFun(xhr,status,err);
+            
+        }
+        
+        _ajax(s);
+    }
+
+})(jQuery);*/
+

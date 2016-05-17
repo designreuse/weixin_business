@@ -55,62 +55,32 @@
 	var loginHref = defaultHref + "/login";
 
 	var curHref = location.href;
-	//用户点击注销按钮
-	if (-1 != curHref.indexOf("/logout")) {
-		//在此处将第三方系统的session也设置成失效
-		//alert("注销第三方系统！");
-		/*$
-				.ajax({
-					type : "get",
-					async : false,
-					url : "http://119.254.111.223:7001/access/adminBasic/loginOutNr.htm",
-					dataType : "jsonp",
-					jsonp : "jsonpCallback",
-					jsonpCallback : "jsonpCallback",
-					success : function(data) {
-						//if (undefined == data || (data.resultCode == -1)) {
-						//alert(data.resultMessage);
-						//}
-					},
-					error : function(data) {
-						//alert(data.resultMessage);
-					}
-				});*/
-		//将浏览器地址改为/login		
-		location.href = loginHref;
-	} else {
-		if (-1 != curHref.indexOf('?')) {
-
-			var tmp = curHref.substring(curHref.indexOf('?'));
-			defaultHref = defaultHref + tmp;
-			loginHref = loginHref + tmp;
+	
+	if(port!=80){
+		
+		if(defaultHref!=curHref && curHref!=loginHref && defaultHref+"/"!=curHref && loginHref+"/"!=curHref){
+			
+			location.href = loginHref;
 		}
-
-		if (defaultHref != curHref && defaultHref + "/" != curHref
-				&& loginHref != curHref && loginHref + "/" != curHref) {
-
-			//在此处将第三方系统的session也设置成失效
-			//alert("注销第三方系统！");
-			/*$
-					.ajax({
-						type : "get",
-						async : false,
-						url : "http://119.254.111.223:7001/access/adminBasic/loginOutNr.htm",
-						dataType : "jsonp",
-						jsonp : "jsonpCallback",
-						jsonpCallback : "jsonpCallback",
-						success : function(data) {
-							//if (undefined == data || (data.resultCode == -1)) {
-							//alert(data.resultMessage);
-							//}
-						},
-						error : function(data) {
-							//alert(data.resultMessage);
-						}
-					});*/
-			//此处表明session失效，要返回登陆页面
-			location.href = defaultHref;
-
+		
+	}else{
+		
+		var hrefWithoutPort = scheme + "://" + server + context;
+		
+		var hrefWithoutPortLogin = scheme + "://" + server + context+ "/login";;
+		
+		if(-1!=curHref.indexOf(":80/")){
+		
+			if(defaultHref!=curHref && curHref!=loginHref && defaultHref+"/"!=curHref && loginHref+"/"!=curHref){
+					
+					location.href = loginHref;
+				}
+		}else{
+			
+			if(hrefWithoutPort!=curHref && curHref!=hrefWithoutPortLogin && hrefWithoutPort+"/"!=curHref && hrefWithoutPortLogin+"/"!=curHref){
+				
+				location.href = hrefWithoutPortLogin;
+			}
 		}
 	}
 
